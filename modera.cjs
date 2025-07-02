@@ -1,23 +1,35 @@
 const fs = require("node:fs")
 const reader = require("rbx-reader")
-const buffer = fs.readFileSync("./model.rbxm")
-const { result } = reader.parseBuffer(buffer)
 
-let sourceAssetIds = new Set()
+class DerivedModelGraph {
+	/** */
+	static traverse(instance, set) {
+		if (instance.SourceAssetId && instance.SourceAssetId !== "-1") {
+			set.add(instance.SourceAssetId)
+		}
 
-function traverse(instance) {
-	if (instance.SourceAssetId && instance.SourceAssetId !== "-1") {
-		sourceAssetIds.add(instance.SourceAssetId)
-	}
-
-	if (instance.Children) {
-		for (const child of instance.Children) {
-			traverse(child)
+		if (instance.Children) {
+			for (const child of instance.Children) {
+				DerivedModelGraph.traverse(child, set)
+			}
 		}
 	}
-}
-result.forEach((instance) => {
-	traverse(instance)
-})
 
-console.log(sourceAssetIds)
+	static scanModel(modelPazh) {
+		const buffer = fs.readFileSync(modelPazh)
+		const { result } = reader.parseBuffer(buffer)
+		const sourceAssetIds = new Set()
+
+		result.forEach((instance) => {
+			this.traverse(instance, sourceAssetIds)
+		})
+
+		return sourceAssetIds
+	}
+}
+
+console.log(DerivedModelGraph.scanModel("./model.rbxm"))
+
+module.exports = {
+	DerivedModelGraph,
+}
