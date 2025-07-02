@@ -1,3 +1,6 @@
+const fs = require("node:fs")
+const reader = require("rbx-reader")
+
 class DerivedModelGraph {
 	/** */
 	static traverse(instance, set) {
