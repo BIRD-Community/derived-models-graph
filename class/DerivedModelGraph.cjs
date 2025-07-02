@@ -26,6 +26,21 @@ class DerivedModelGraph {
 
 		return sourceAssetIds
 	}
+
+	static scanDirectory(directoryPath) {
+		const modelSets = new Map()
+
+		const files = fs.readdirSync(directoryPath)
+		for (const file of files) {
+			if (file.endsWith(".rbxm")) {
+				const modelPath = `${directoryPath}/${file}`
+				const modelSourceAssetIds = this.scanModel(modelPath)
+				modelSets.set(file, modelSourceAssetIds)
+			}
+		}
+
+		return modelSets
+	}
 }
 
 module.exports = {

@@ -1,3 +1,3 @@
 const { DerivedModelGraph } = require("./class/DerivedModelGraph.cjs")
 
-console.log(DerivedModelGraph.scanModel("./model.rbxm"))
+console.log(DerivedModelGraph.scanDirectory("./models"))
